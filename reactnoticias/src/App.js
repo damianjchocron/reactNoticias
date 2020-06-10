@@ -1,25 +1,25 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Route } from 'react-router-dom'
+import Header from './component/header';
+import Footer from './component/footer';
+import Detalle from './component/detalle';
+import Form from './component/form';
+import Home from './component/home';
+
+
+// import './App.css';
 
 function App() {
   return (
+    <BrowserRouter>
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Header />
+      <Route exact path="/" component={Home}/>
+      <Route  path="/detalle/:id" component={Detalle}/> {/* De donde saca el id??? */}
+      <Route  path="/form" component={Form}/>
+      <Footer />
     </div>
+    </BrowserRouter>
   );
 }
 
