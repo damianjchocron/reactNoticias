@@ -1,53 +1,51 @@
 import React from 'react';
 import Card from './card';
-
-const Home = () => {
-    const obj = [
-        {
-            key: 3,
-            title: 'titulo 1',
-            description: 'descripcion 1',
-            alt: 'alt 1',
-            src: 'https://www.eyescreamproductions.com/allaccess/wp-content/uploads/2020/02/les-claypool-primus-live-2019.jpg',
-            button: 'Detalle'
-        },
-        {
-            key: 4,
-            title: 'titulo 1',
-            description: 'descripcion 1',
-            alt: 'alt 1',
-            src: 'https://www.eyescreamproductions.com/allaccess/wp-content/uploads/2020/02/les-claypool-primus-live-2019.jpg',
-            button: 'Detalle'
-        },
-        {
-            key: 1,
-            title: 'titulo 1',
-            description: 'descripcion 1',
-            alt: 'alt 1',
-            src: 'https://www.eyescreamproductions.com/allaccess/wp-content/uploads/2020/02/les-claypool-primus-live-2019.jpg',
-            button: 'Detalle'
-        },
-        {
-            key: 2,
-            title: 'titulo 1',
-            description: 'descripcion 1',
-            alt: 'alt 1',
-            src: 'https://www.eyescreamproductions.com/allaccess/wp-content/uploads/2020/02/les-claypool-primus-live-2019.jpg',
-            button: 'Detalle'
-        },
-    ]
-
-    const list = obj.map((item)=> {
-       return <Card key={item.key} obj={item} />
-
-    })
+import ListCard from '../data/dataCard';
+import ResultToListCard from '../data/dataCard';
+import $ from 'jquery';
 
 
-    return (
-        <div>
-            {list}
-        </div>
-    )
+class Home extends React.Component {
+
+
+    state = {
+        listCard: [] //Declaro que es un array
+    };
+
+
+    render() {
+        const list = this.state.listCard.map((item)=> <Card key={item.key} obj={item}/>);
+        return (
+            <div className="row">
+                {list}
+            </div>
+        );
+    };
+
+    componentDidMount() { //Esto se ejecuta ultimo de todo
+        $.ajax({
+            method: "GET",
+            url: "http://localhost:8000/api/multimedia",
+            dataType: "json",
+            data: { page: 1 }
+        })
+            .done((result) => {
+                var listImg = result;
+                $.ajax({
+                    method: "GET",
+                    url: "http://localhost:8000/api/articulos",
+                    dataType: "json",
+                    data: { page: 1 }
+                })
+                    .done((result) => {
+                        var list = ResultToListCard(result, listImg);
+                        this.setState({
+                            listCard: list
+                        });
+                    });
+            });
+    };
+
 }
 
 export default Home;

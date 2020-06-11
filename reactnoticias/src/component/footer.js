@@ -17,6 +17,9 @@ const Footer = () => {
                             <a className="nav-link" href="/detalle">Detalle</a>
                         </li>
                         <li className="nav-item">
+                            <a className="nav-link" href="/categoria">Categoria</a>
+                        </li>
+                        <li className="nav-item">
                             <a className="nav-link" href="/form">Contacto</a>
                         </li>
 
