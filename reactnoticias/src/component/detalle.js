@@ -1,45 +1,51 @@
 import React from 'react';
 import Card from './card';
 import NotFound from './notFound';
-import ResultToListCard from '../data/dataCard';
-import $ from 'jquery';
+import AjaxRequest from './ajaxRequest';
+import ResultToList from './resultToList';
+
 
 class Detalle extends React.Component {
+    ajax = new AjaxRequest(); //Instancia de Clase AjaxRequest
+    resultToList = new ResultToList(); //Instacia de clase ResultToList QUe es el modelo
     state = {
-        id: this.props.match.params.id, //Prop viene por el Routes de App y me permite acceder al
-        listCard: [] //Declaro que es un array
+        id: this.props.match.params.id, //Prop viene por el Routes de App y me permite acceder al (match viene dentro de el props)
+        card: "" //Declaro que es un array Despues voy a pasarle elementos
     };
+    listImg = [];
 
-    componentDidMount() { //Esto se ejecuta ultimo de todo
-        $.ajax({
-            method: "GET",
+    componentDidMount() {
+        let objRequest = {
             url: "http://localhost:8000/api/multimedia",
-            dataType: "json",
-            data: { page: 1 }
+            data: { page: 1 },
+            callBack: this.callBackMultimedia 
+        };
+        this.ajax.AjaxGetAll(objRequest); //LLamo a funcion de la Instacia creada arriba
+    }
+
+    callBackMultimedia = (result) => {
+        this.listImg = result;
+        let objRequest = {
+            url: "http://localhost:8000/api/articulos",
+            data: { id:this.state.id },
+            callBack: this.callBackArticulo
+        };
+        this.ajax.AjaxGetItem(objRequest); //LLamo a funcion de la Instacia creada arriba
+    }
+
+    callBackArticulo = (result) => {
+        let item = this.resultToList.Card(result, this.listImg); //LLamo a funcion de la Instacia creada arriba para asignar los valores y 
+        this.setState({ 
+            // viene un unico elemento
+            card: item
         })
-            .done((result) => {
-                var listImg = result;
-                $.ajax({
-                    method: "GET",
-                    url: "http://localhost:8000/api/articulos",
-                    dataType: "json",
-                    data: { page: 1 }
-                })
-                    .done((result) => {
-                        var list = ResultToListCard(result, listImg);
-                        this.setState({
-                            listCard: list
-                        });
-                    })
-            })
     }
 
     render() {
         console.log(this.props);
-        let { id } = this.state;
         var card = <NotFound />; //Por defecto le asigno el componente de No existe
-        if (this.state.listCard.length > 0) {
-            let item = this.state.listCard.find(element => element.key == id);
+        if (this.state.card) {
+            let item = this.state.card;
             if (item) card = <Card obj={item} />;
         }
         return (
@@ -51,4 +57,8 @@ class Detalle extends React.Component {
 }
 
 
-export default Detalle
+
+
+
+
+export default Detalle;
